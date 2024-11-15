@@ -30,6 +30,14 @@ const MainLayout = ({ children }) => {
             </li>
             <li>
               <Link
+                to="/profile"
+                className="block p-2 hover:bg-gray-700 rounded"
+              >
+                My Invoices
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/clients"
                 className="block p-2 hover:bg-gray-700 rounded"
               >
