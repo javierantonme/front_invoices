@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../axiosConfig";
-import {AuthContext} from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -33,6 +33,7 @@ const Dashboard = () => {
       console.error(err);
       if (err.response?.status === 401) {
         // Si el token es inválido, cerrar sesión
+        console.log(`Token no valido`, err);
         logout();
         navigate("/login");
       } else {
@@ -62,7 +63,7 @@ const Dashboard = () => {
         <div className="bg-blue-500 text-white rounded-lg shadow-md flex items-center justify-center h-40">
           <div className="text-center">
             <p className="text-lg font-semibold">Total Invoices</p>
-            <p className="text-3xl font-bold">{data.totalInvoices}</p>
+            <p className="text-3xl font-bold">${data.totalInvoices}</p>
           </div>
         </div>
 
@@ -70,7 +71,7 @@ const Dashboard = () => {
         <div className="bg-green-500 text-white rounded-lg shadow-md flex items-center justify-center h-40">
           <div className="text-center">
             <p className="text-lg font-semibold">This Fiscal Period</p>
-            <p className="text-3xl font-bold">{data.fiscalPeriodInvoices}</p>
+            <p className="text-3xl font-bold">${data.fiscalPeriodInvoices}</p>
           </div>
         </div>
 
@@ -78,7 +79,7 @@ const Dashboard = () => {
         <div className="bg-red-500 text-white rounded-lg shadow-md flex items-center justify-center h-40">
           <div className="text-center">
             <p className="text-lg font-semibold">Tax Provision</p>
-            <p className="text-3xl font-bold">{data.taxProvision}</p>
+            <p className="text-3xl font-bold">${data.taxProvision}</p>
           </div>
         </div>
       </div>
