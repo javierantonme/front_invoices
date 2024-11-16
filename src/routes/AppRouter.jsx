@@ -6,6 +6,7 @@ import Dashboard from "../pages/Dashboard.jsx";
 import MainLayout from "../layouts/MainLayout.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import CustomersPage from "../pages/CustomersPage.jsx";
+import ServicesPage from "../pages/ServicesPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Dashboard /> },
       { path: "/clients", element: <CustomersPage /> },
-      { path: "/services", element: <div>Servicios</div> },
+      { path: "/services", element: <ServicesPage /> },
     ],
   },
   {
