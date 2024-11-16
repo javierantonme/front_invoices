@@ -28,7 +28,7 @@ const LoginPage = () => {
         email,
         password,
       });
-      console.log(response)
+
       login(response.data); // Suponiendo que `response.data` contiene usuario y token
       navigate("/");
     } catch (err) {
@@ -46,7 +46,8 @@ const LoginPage = () => {
         <div className="max-w-lg text-center">
           <h1 className="text-4xl font-bold mb-4">Welcome to InvoiceApp</h1>
           <p className="text-lg">
-            Manage your clients, services, and invoices effortlessly. Sign in to get started!
+            Manage your clients, services, and invoices effortlessly. Sign in to
+            get started!
           </p>
         </div>
       </div>
@@ -92,9 +93,7 @@ const LoginPage = () => {
               />
             </div>
 
-            {error && (
-              <p className="text-red-500 text-sm mb-4">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
             <button
               type="submit"
