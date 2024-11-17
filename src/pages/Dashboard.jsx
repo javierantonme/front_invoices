@@ -9,6 +9,7 @@ const Dashboard = () => {
     totalInvoices: 0,
     fiscalPeriodInvoices: 0,
     taxProvision: 0,
+    quantity: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +28,7 @@ const Dashboard = () => {
         totalInvoices: response.data.totalAmount,
         fiscalPeriodInvoices: response.data.totalAmount,
         taxProvision: response.data.totalSavesForTaxes,
+        quantity: response.data.invoiceCount
       });
       setLoading(false);
     } catch (err) {
@@ -62,15 +64,15 @@ const Dashboard = () => {
         {/* Total Invoices */}
         <div className="bg-blue-500 text-white rounded-lg shadow-md flex items-center justify-center h-40">
           <div className="text-center">
-            <p className="text-lg font-semibold">Total Invoices</p>
-            <p className="text-3xl font-bold">${data.totalInvoices}</p>
+            <p className="text-lg font-semibold">Number of Invoices</p>
+            <p className="text-3xl font-bold">{data.quantity}</p>
           </div>
         </div>
 
         {/* Fiscal Period Invoices */}
         <div className="bg-green-500 text-white rounded-lg shadow-md flex items-center justify-center h-40">
           <div className="text-center">
-            <p className="text-lg font-semibold">This Fiscal Period</p>
+            <p className="text-lg font-semibold">Total Amount</p>
             <p className="text-3xl font-bold">${data.fiscalPeriodInvoices}</p>
           </div>
         </div>

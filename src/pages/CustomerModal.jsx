@@ -13,6 +13,8 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, customer }) => {
     observations: "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false); // Nuevo estado
+
   const initialFormState = {
     code: "",
     name: "",
@@ -24,7 +26,6 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, customer }) => {
     observations: "",
   };
 
-  // Rellenar los datos si se edita un cliente
   useEffect(() => {
     if (customer) {
       setFormData({
@@ -37,9 +38,9 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, customer }) => {
         rate: customer.rate || "",
         observations: customer.observations || "",
       });
-    }else {
-        setFormData(initialFormState); // Limpia el formulario cuando no hay cliente
-      }
+    } else {
+      setFormData(initialFormState); // Limpia el formulario cuando no hay cliente
+    }
   }, [customer]);
 
   const handleChange = (e) => {
@@ -47,10 +48,16 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, customer }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    onClose(); // Cierra el modal después de enviar
+    setIsSubmitting(true); // Activa el estado de "procesando"
+
+    try {
+      await onSubmit(formData); // Llama la función pasada como prop
+    } finally {
+      setIsSubmitting(false); // Desactiva el estado al finalizar
+      onClose(); // Cierra el modal después de guardar
+    }
   };
 
   if (!isOpen) return null; // No renderizar si el modal está cerrado
@@ -137,14 +144,18 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, customer }) => {
               type="button"
               onClick={onClose}
               className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2"
+              disabled={isSubmitting} // Desactiva el botón si está procesando
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className={`bg-blue-500 text-white px-4 py-2 rounded ${
+                isSubmitting ? "opacity-50" : "hover:bg-blue-600"
+              }`}
+              disabled={isSubmitting} // Desactiva el botón si está procesando
             >
-              {customer ? "Update" : "Add"}
+              {isSubmitting ? "Processing..." : customer ? "Update" : "Add"}
             </button>
           </div>
         </form>

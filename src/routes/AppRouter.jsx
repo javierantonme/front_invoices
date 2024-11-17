@@ -7,6 +7,9 @@ import MainLayout from "../layouts/MainLayout.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import CustomersPage from "../pages/CustomersPage.jsx";
 import ServicesPage from "../pages/ServicesPage.jsx";
+import ProfilePage from "../pages/ProfilePage.jsx";
+import InvoicesPage from "../pages/InvoicesPage.jsx";
+import CreateInvoicePage from "../pages/CreateInvoicePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +25,10 @@ const router = createBrowserRouter([
       { path: "/", element: <Dashboard /> },
       { path: "/clients", element: <CustomersPage /> },
       { path: "/services", element: <ServicesPage /> },
+      { path: "/profile", element: <ProfilePage /> },
+      { path: "/invoices", element: <InvoicesPage /> },
+      { path: "/invoices/new", element: <CreateInvoicePage />,
+      },
     ],
   },
   {
