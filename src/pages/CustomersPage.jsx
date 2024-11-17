@@ -4,7 +4,7 @@ import CustomerModal from "./CustomerModal";
 import Swal from "sweetalert2";
 
 const CustomersPage = () => {
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState([]); // Estado inicial como un arreglo vacío
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,7 +14,12 @@ const CustomersPage = () => {
     try {
       const response = await api.get("/private/customer");
 
-      setCustomers(response.data.customers);
+      // Verificar si `customers` está presente en la respuesta
+      if (response.data.customers) {
+        setCustomers(response.data.customers);
+      } else {
+        setCustomers([]); // Si no hay clientes, establece un arreglo vacío
+      }
     } catch (err) {
       console.error(err);
       setError("Error fetching customers.");
@@ -26,6 +31,7 @@ const CustomersPage = () => {
   useEffect(() => {
     fetchCustomers();
   }, []);
+
   const handleAddNewCustomer = () => {
     setEditingCustomer(null);
     setIsModalOpen(true);
@@ -109,64 +115,52 @@ const CustomersPage = () => {
       />
 
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-100">
-                Code
-              </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-100">
-                Name
-              </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-100">
-                Phone
-              </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-100">
-                Suburb
-              </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-100">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.map((customer) => (
-              <tr
-                key={customer.id}
-                className="hover:bg-gray-100 transition-colors"
-              >
-                <td className="border border-gray-300 px-4 py-2">
-                  {customer.code}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {customer.name}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {customer.phone}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {customer.suburb}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 w-full">
-                    <button
-                      className="bg-blue-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-blue-600"
-                      onClick={() => handleEditCustomer(customer)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-red-600"
-                      onClick={() => handleDeleteCustomer(customer.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
+        {customers.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">
+            No customers found for this user. Click Add New Customer to create one.
+          </p>
+        ) : (
+          <table className="w-full border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Code</th>
+                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Name</th>
+                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Phone</th>
+                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Suburb</th>
+                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {customers.map((customer) => (
+                <tr
+                  key={customer.id}
+                  className="hover:bg-gray-100 transition-colors"
+                >
+                  <td className="border border-gray-300 px-4 py-2">{customer.code}</td>
+                  <td className="border border-gray-300 px-4 py-2">{customer.name}</td>
+                  <td className="border border-gray-300 px-4 py-2">{customer.phone}</td>
+                  <td className="border border-gray-300 px-4 py-2">{customer.suburb}</td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 w-full">
+                      <button
+                        className="bg-blue-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-blue-600"
+                        onClick={() => handleEditCustomer(customer)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="bg-red-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-red-600"
+                        onClick={() => handleDeleteCustomer(customer.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

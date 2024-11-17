@@ -30,7 +30,7 @@ const MainLayout = ({ children }) => {
             </li>
             <li>
               <Link
-                to="/profile"
+                to="/invoices"
                 className="block p-2 hover:bg-gray-700 rounded"
               >
                 My Invoices
