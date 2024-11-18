@@ -66,18 +66,20 @@ const ServicesPage = () => {
   };
 
   const handleSubmitService = async (serviceData) => {
+    
     try {
       if (editingService) {
-        await api.put(`/private/service/${editingService.id}`, serviceData);
+    await api.put(`/private/service/${editingService.id}`, serviceData);
         Swal.fire("Updated!", "The service has been updated.", "success");
       } else {
-        await api.post("/private/service", serviceData);
+      await api.post("/private/service", serviceData);
         Swal.fire("Added!", "The service has been added.", "success");
       }
       fetchServices();
     } catch (err) {
+    
       console.error("Error saving service:", err);
-      Swal.fire("Error!", "Failed to save the service.", "error");
+      Swal.fire("Error!", err.response.data.error, "error");
     }
   };
 

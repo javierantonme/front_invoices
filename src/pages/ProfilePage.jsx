@@ -14,6 +14,7 @@ const ProfilePage = () => {
     bsb: "",
     accountNumber: "",
     consecInit: 0,
+    initialValue: 0.0, // Nuevo campo
   });
 
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,6 @@ const ProfilePage = () => {
       Swal.fire("Error", "Failed to update your profile.", "error");
     }
   };
-  
 
   if (loading) return <p>Loading...</p>;
 
@@ -62,10 +62,15 @@ const ProfilePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6">
           {/* Información Personal */}
           <div className="p-4 border border-gray-300 rounded-md">
-            <h2 className="text-lg font-semibold mb-4 text-gray-700">Personal Information</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-700">
+              Personal Information
+            </h2>
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   First Name
                 </label>
                 <input
@@ -81,7 +86,10 @@ const ProfilePage = () => {
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Last Name
                 </label>
                 <input
@@ -97,7 +105,10 @@ const ProfilePage = () => {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email (cannot be changed)
                 </label>
                 <input
@@ -111,7 +122,10 @@ const ProfilePage = () => {
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Phone
                 </label>
                 <input
@@ -126,7 +140,10 @@ const ProfilePage = () => {
               </div>
 
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Address
                 </label>
                 <input
@@ -144,10 +161,15 @@ const ProfilePage = () => {
 
           {/* Información Bancaria */}
           <div className="p-4 border border-gray-300 rounded-md">
-            <h2 className="text-lg font-semibold mb-4 text-gray-700">Banking Information</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-700">
+              Banking Information
+            </h2>
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label htmlFor="abn" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="abn"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   ABN
                 </label>
                 <input
@@ -162,7 +184,10 @@ const ProfilePage = () => {
               </div>
 
               <div>
-                <label htmlFor="bsb" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="bsb"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   BSB
                 </label>
                 <input
@@ -177,7 +202,10 @@ const ProfilePage = () => {
               </div>
 
               <div>
-                <label htmlFor="accountNumber" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="accountNumber"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Account Number
                 </label>
                 <input
@@ -196,10 +224,15 @@ const ProfilePage = () => {
 
         {/* Información de Facturación */}
         <div className="mt-6 p-4 border border-gray-300 rounded-md">
-          <h2 className="text-lg font-semibold mb-4 text-gray-700">Billing Information</h2>
-          <div className="grid grid-cols-1 gap-4">
+          <h2 className="text-lg font-semibold mb-4 text-gray-700">
+            Billing Information
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="consecInit" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="consecInit"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Invoice Consecutive Start
               </label>
               <input
@@ -213,11 +246,29 @@ const ProfilePage = () => {
                 required
               />
             </div>
+            <div>
+              <label
+                htmlFor="initialValue"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Initial Value
+              </label>
+              <input
+                type="number"
+                name="initialValue"
+                id="initialValue"
+                step="0.01"
+                value={profile.initialValue}
+                onChange={handleChange}
+                placeholder="Initial Value"
+                className="border rounded px-4 py-2 w-full"
+              />
+            </div>
           </div>
         </div>
 
         <div className="flex justify-between items-center mt-6">
-        <button
+          <button
             type="button"
             onClick={() => setIsPasswordModalOpen(true)}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"

@@ -8,6 +8,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service }) => {
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const [isLoading, setIsLoading] = useState(false); // Estado para mostrar el spinner
 
   // Rellenar los datos si se edita un servicio
   useEffect(() => {
@@ -26,17 +27,27 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData); // Envía los datos al método `onSubmit` del padre
-    onClose(); // Cierra el modal después de enviar
+    setIsLoading(true); // Mostrar el spinner al iniciar la solicitud
+    try {
+      await onSubmit(formData); // Envía los datos al método `onSubmit` del padre
+      onClose(); // Cierra el modal después de enviar
+    } finally {
+      setIsLoading(false); // Ocultar el spinner al finalizar
+    }
   };
 
   if (!isOpen) return null; // No renderizar si el modal está cerrado
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-lg p-6">
+      {isLoading && (
+        <div className="absolute inset-0 flex justify-center items-center z-50 bg-black bg-opacity-30">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+      <div className={`bg-white rounded-lg w-full max-w-lg p-6 ${isLoading ? "opacity-50" : ""}`}>
         <h2 className="text-2xl font-bold mb-4">
           {service ? "Edit Service" : "Add New Service"}
         </h2>
@@ -50,6 +61,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service }) => {
               placeholder="Service Code"
               className="border rounded px-4 py-2 w-full"
               required
+              disabled={isLoading}
             />
             <input
               type="text"
@@ -59,6 +71,7 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service }) => {
               placeholder="Service Name"
               className="border rounded px-4 py-2 w-full"
               required
+              disabled={isLoading}
             />
           </div>
           <div className="flex justify-end mt-6">
@@ -69,14 +82,16 @@ const ServiceModal = ({ isOpen, onClose, onSubmit, service }) => {
                 onClose();
               }}
               className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2"
+              disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              disabled={isLoading}
             >
-              {service ? "Update" : "Add"}
+              {isLoading ? "Saving..." : service ? "Update" : "Add"}
             </button>
           </div>
         </form>
