@@ -65,7 +65,6 @@ const CreateInvoicePage = () => {
       return;
     }
 
-    // Asegúrate de que el tipo de dato coincida
     const customer = customers.find(
       (c) => String(c.id) === String(selectedCustomer)
     );
@@ -78,8 +77,6 @@ const CreateInvoicePage = () => {
       );
       return;
     }
-
-    // const customer = customers.find((c) => c.id === selectedCustomer); // Buscar cliente seleccionado
 
     if (!customer) {
       Swal.fire("Error", "Invalid customer selected.", "error");
@@ -129,7 +126,7 @@ const CreateInvoicePage = () => {
       cancelButtonText: "Cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        setSaving(true); // Activar el estado de guardado
+        setSaving(true); // Mostrar spinner
         try {
           const detailsPayload = invoiceDetails.map((detail) => ({
             serviceId: detail.serviceId,
@@ -147,7 +144,7 @@ const CreateInvoicePage = () => {
           console.error("Error creating invoice:", error);
           Swal.fire("Error", "Failed to create invoice.", "error");
         } finally {
-          setSaving(false); // Desactivar el estado de guardado
+          setSaving(false); // Ocultar spinner
         }
       }
     });
@@ -155,6 +152,11 @@ const CreateInvoicePage = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      {saving && (
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       <h1 className="text-2xl font-bold mb-6">Create Invoice</h1>
       <form>
         <div className="mb-4">

@@ -7,21 +7,16 @@ import { formatDate } from "../helpers/dateFunction";
 const InvoicesPage = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false); // Estado para mostrar el spinner
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
         const response = await api.get("/private/invoice");
-
-        if (response.data.invoices) {
-          setInvoices(response.data.invoices);
-        } else {
-          setInvoices([]);
-        }
+        setInvoices(response.data.invoices || []);
       } catch (error) {
         console.error("Error fetching invoices:", error);
-        setLoading(false);
       } finally {
         setLoading(false);
       }
@@ -42,6 +37,7 @@ const InvoicesPage = () => {
     });
 
     if (confirm.isConfirmed) {
+      setProcessing(true); // Mostrar spinner
       try {
         await api.delete(`private/invoices/${invoiceId}`);
         setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId));
@@ -49,41 +45,43 @@ const InvoicesPage = () => {
       } catch (error) {
         console.error("Error deleting invoice:", error);
         Swal.fire("Error", "Failed to delete invoice.", "error");
+      } finally {
+        setProcessing(false); // Ocultar spinner
       }
     }
   };
 
   const handlePrintPDF = async (invoiceId) => {
+    setProcessing(true); // Mostrar spinner
     try {
-      // Solicitar el PDF directamente
       const response = await api.get(`/private/invoices/${invoiceId}/print`, {
-        responseType: "blob", // Importante para manejar archivos binarios
+        responseType: "blob",
       });
 
-      // Crear una URL temporal para el Blob
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
-      // Abrir en una nueva pestaña
       window.open(pdfUrl, "_blank");
 
-      // Opcional: liberar la URL temporal después de usarla
       setTimeout(() => window.URL.revokeObjectURL(pdfUrl), 1000);
     } catch (error) {
       console.error("Error fetching the PDF:", error);
       Swal.fire("Error", "Failed to fetch the PDF.", "error");
+    } finally {
+      setProcessing(false); // Ocultar spinner
     }
   };
 
   const handleSendEmail = async (invoiceId) => {
+    setProcessing(true); // Mostrar spinner
     try {
-        ///invoices/sendpdf/:invoiceId
       await api.get(`/private/invoices/sendpdf/${invoiceId}`);
       Swal.fire("Success", "Invoice sent via email successfully!", "success");
-
     } catch (error) {
       console.error("Error sending email:", error);
       Swal.fire("Error", "Failed to send invoice via email.", "error");
+    } finally {
+      setProcessing(false); // Ocultar spinner
     }
   };
 
@@ -91,11 +89,15 @@ const InvoicesPage = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      {processing && (
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Invoices</h1>
-        {/* Botón para crear nueva factura */}
         <button
-          onClick={() => navigate("/invoices/new")} // Redirigir a la página de creación
+          onClick={() => navigate("/invoices/new")}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           + New Invoice
