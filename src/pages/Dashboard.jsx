@@ -9,11 +9,11 @@ const Dashboard = () => {
     totalInvoices: 0,
     fiscalPeriodInvoices: 0,
     taxProvision: 0,
-    quantity: 0
+    quantity: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { logout } = useContext(AuthContext); // Acceso a logout para cerrar sesión
+  const {logout } = useContext(AuthContext); // Acceso a logout para cerrar sesión
   const navigate = useNavigate();
 
   // Función para obtener los datos del backend
@@ -28,7 +28,7 @@ const Dashboard = () => {
         totalInvoices: response.data.totalAmount,
         fiscalPeriodInvoices: response.data.totalAmount,
         taxProvision: response.data.totalSavesForTaxes,
-        quantity: response.data.invoiceCount
+        quantity: response.data.invoiceCount,
       });
       setLoading(false);
     } catch (err) {

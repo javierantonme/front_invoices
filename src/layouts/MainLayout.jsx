@@ -6,7 +6,6 @@ import { AuthContext } from "../context/AuthContext";
 const MainLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { logout, user } = useContext(AuthContext); // Obtener información del usuario
-
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -72,6 +71,16 @@ const MainLayout = ({ children }) => {
                     Profile
                   </Link>
                 </li>
+                {user.userLoged.role === "admin" && (
+                  <li>
+                    <Link
+                      to="/profile"
+                      className="block p-2 hover:bg-gray-700 rounded"
+                    >
+                      Ivite Someone Else
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
