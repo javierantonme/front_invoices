@@ -30,6 +30,7 @@ const LoginPage = () => {
       });
 
       login(response.data); // Suponiendo que `response.data` contiene usuario y token
+    
       navigate("/");
     } catch (err) {
       console.error(err);
