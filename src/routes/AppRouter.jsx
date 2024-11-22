@@ -10,6 +10,7 @@ import ServicesPage from "../pages/ServicesPage.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
 import InvoicesPage from "../pages/InvoicesPage.jsx";
 import CreateInvoicePage from "../pages/CreateInvoicePage.jsx";
+import SelfRegister from "../pages/SelfRegister.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,13 +28,16 @@ const router = createBrowserRouter([
       { path: "/services", element: <ServicesPage /> },
       { path: "/profile", element: <ProfilePage /> },
       { path: "/invoices", element: <InvoicesPage /> },
-      { path: "/invoices/new", element: <CreateInvoicePage />,
-      },
+      { path: "/invoices/new", element: <CreateInvoicePage /> },
     ],
   },
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/register",
+    element: <SelfRegister />, // Ruta pública para el registro
   },
 ]);
 
