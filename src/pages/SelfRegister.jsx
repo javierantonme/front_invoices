@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../axiosConfig";
 import Swal from "sweetalert2";
 
-const ProfilePage = () => {
-  const [profile, setProfile] = useState({
+const SelfRegister = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+
+  const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -19,169 +23,195 @@ const ProfilePage = () => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Validar el token al cargar el componente
   useEffect(() => {
-    const fetchProfile = async () => {
+    const validateToken = async () => {
       try {
-        const response = await api.get("/private/user");
-        setProfile((prev) => ({
-          ...prev,
-          ...response.data.user,
-        }));
+        if (!token) {
+          throw new Error("Token is missing. Please check your invitation link.");
+        }
+
+        // Prellenar el correo desde el token si es válido
+        const response = await api.get(`/public/register?token=${token}`);
+        setFormData((prev) => ({ ...prev, email: response.data.email }));
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+      } catch (err) {
+        console.error("Error validating token:", err);
+        setError(err.response?.data?.error || "Invalid or expired token.");
         setLoading(false);
       }
     };
 
-    fetchProfile();
-  }, []);
+    validateToken();
+  }, [token]);
 
+  // Manejar cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile({ ...profile, [name]: value });
+    setFormData({ ...formData, [name]: value });
   };
 
+  // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar contraseñas
-    if (profile.password && profile.password !== profile.confirmPassword) {
+    // Validar contraseñas coincidentes
+    if (formData.password !== formData.confirmPassword) {
       return Swal.fire("Error", "Passwords do not match.", "error");
     }
 
     try {
-      const response = await api.put("/private/user", profile);
-      Swal.fire("Success", "Your profile has been updated!", "success");
-      setProfile((prev) => ({
-        ...prev,
-        password: "",
-        confirmPassword: "",
-        ...response.data,
-      }));
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      Swal.fire("Error", "Failed to update your profile.", "error");
+      // Enviar los datos del formulario al backend
+      await api.post(`/public/register?token=${token}`, formData);
+      Swal.fire("Success", "Registration successful!", "success");
+    } catch (err) {
+      console.error("Error registering user:", err);
+      Swal.fire(
+        "Error",
+        err.response?.data?.error || "Failed to register. Please try again.",
+        "error"
+      );
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  // Mostrar carga o errores si es necesario
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-lg font-semibold">Validating invitation...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="bg-red-100 text-red-700 p-4 rounded-md">{error}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Profile</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6">
-          {/* Información Personal */}
-          <div className="p-4 border border-gray-300 rounded-md">
-            <h2 className="text-lg font-semibold mb-4 text-gray-700">
-              Personal Information
-            </h2>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  First Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  id="firstName"
-                  value={profile.firstName}
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  className="border rounded px-4 py-2 w-full"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Last Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  id="lastName"
-                  value={profile.lastName}
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  className="border rounded px-4 py-2 w-full"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email (cannot be changed)
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={profile.email}
-                  readOnly
-                  className="border rounded px-4 py-2 w-full bg-gray-200 cursor-not-allowed"
-                />
-              </div>
-              {/* Campos de Contraseña */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Password <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  value={profile.password}
-                  onChange={handleChange}
-                  placeholder="Enter new password"
-                  className="border rounded px-4 py-2 w-full"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Confirm Password <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  value={profile.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm your password"
-                  className="border rounded px-4 py-2 w-full"
-                />
-              </div>
-            </div>
-          </div>
-          {/* Repetir para información bancaria */}
+    <div className="flex h-screen">
+      {/* Welcome Section */}
+      <div className="flex-1 bg-blue-500 text-white flex items-center justify-center">
+        <div className="max-w-lg text-center">
+          <h1 className="text-4xl font-bold mb-4">Welcome to Our App</h1>
+          <p className="text-lg">
+            Register and complete your profile to start using the application.
+          </p>
         </div>
+      </div>
 
-        <div className="flex justify-between items-center mt-6">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Update Profile
-          </button>
+      {/* Registration Form */}
+      <div className="flex-1 flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-semibold mb-6 text-center">
+            Complete Registration
+          </h2>
+          <form onSubmit={handleSubmit}>
+            {/* Campos del formulario */}
+            <div className="mb-4">
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                First Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                id="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                placeholder="First Name"
+                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Last Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                id="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Last Name"
+                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email (cannot be changed)
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                value={formData.email}
+                readOnly
+                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm bg-gray-100 cursor-not-allowed sm:text-sm"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter password"
+                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirm Password <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                id="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm password"
+                className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            >
+              Register
+            </button>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
 
-export default ProfilePage;
+export default SelfRegister;
