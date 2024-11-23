@@ -11,6 +11,9 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import InvoicesPage from "../pages/InvoicesPage.jsx";
 import CreateInvoicePage from "../pages/CreateInvoicePage.jsx";
 import SelfRegister from "../pages/SelfRegister.jsx";
+import NotFoundPage from "../pages/NotFoundPage.jsx";
+import InviteUserPage from "../pages/InviteUserPage.jsx";
+import RoleProtectedRoute from "./RoleProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,11 +27,20 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "/", element: <Dashboard /> },
+      { path: "*", element: <NotFoundPage /> },
       { path: "/clients", element: <CustomersPage /> },
       { path: "/services", element: <ServicesPage /> },
       { path: "/profile", element: <ProfilePage /> },
       { path: "/invoices", element: <InvoicesPage /> },
       { path: "/invoices/new", element: <CreateInvoicePage /> },
+      {
+        path: "/invite",
+        element: (
+          <RoleProtectedRoute allowedRoles={["admin"]}>
+            <InviteUserPage />
+          </RoleProtectedRoute>
+        ),
+      }, // Nueva ruta
     ],
   },
   {

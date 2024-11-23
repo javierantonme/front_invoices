@@ -74,10 +74,10 @@ const MainLayout = ({ children }) => {
                 {user.userLoged.role === "admin" && (
                   <li>
                     <Link
-                      to="/profile"
+                      to="/invite"
                       className="block p-2 hover:bg-gray-700 rounded"
                     >
-                      Ivite Someone Else
+                      Invite Someone
                     </Link>
                   </li>
                 )}
