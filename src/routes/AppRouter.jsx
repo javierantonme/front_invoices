@@ -14,6 +14,7 @@ import SelfRegister from "../pages/SelfRegister.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import InviteUserPage from "../pages/InviteUserPage.jsx";
 import RoleProtectedRoute from "./RoleProtectedRoute.jsx";
+import UsersTable from "../pages/UsersTable.jsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,14 @@ const router = createBrowserRouter([
         element: (
           <RoleProtectedRoute allowedRoles={["admin"]}>
             <InviteUserPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "/users",
+        element: (
+          <RoleProtectedRoute allowedRoles={["admin"]}>
+            <UsersTable />
           </RoleProtectedRoute>
         ),
       }, // Nueva ruta
