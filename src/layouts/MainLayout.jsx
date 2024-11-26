@@ -91,6 +91,16 @@ const MainLayout = ({ children }) => {
                     </Link>
                   </li>
                 )}
+                 {user.userLoged.role === "admin" && (
+                  <li>
+                    <Link
+                      to="/licences"
+                      className="block p-2 hover:bg-gray-700 rounded"
+                    >
+                      Licences
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
