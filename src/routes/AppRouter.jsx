@@ -16,6 +16,7 @@ import InviteUserPage from "../pages/InviteUserPage.jsx";
 import RoleProtectedRoute from "./RoleProtectedRoute.jsx";
 import UsersTable from "../pages/UsersTable.jsx";
 import TermsAndConditions from "../pages/TermsAndConditions.jsx";
+import LicencesTable from "../pages/LicencesTable.jsx";
 
 const router = createBrowserRouter([
   {
@@ -50,7 +51,15 @@ const router = createBrowserRouter([
             <UsersTable />
           </RoleProtectedRoute>
         ),
-      }, // Nueva ruta
+      },
+      {
+        path: "/licences",
+        element: (
+          <RoleProtectedRoute allowedRoles={["admin"]}>
+            <LicencesTable />
+          </RoleProtectedRoute>
+        ),
+      }, // Nueva ruta // Nueva ruta
     ],
   },
   {

@@ -60,7 +60,7 @@ const UsersTable = () => {
     }
   };
 
-  console.log(users)
+  
 
   return (
     <div className="p-6">
