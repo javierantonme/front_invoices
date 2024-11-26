@@ -15,6 +15,7 @@ import NotFoundPage from "../pages/NotFoundPage.jsx";
 import InviteUserPage from "../pages/InviteUserPage.jsx";
 import RoleProtectedRoute from "./RoleProtectedRoute.jsx";
 import UsersTable from "../pages/UsersTable.jsx";
+import TermsAndConditions from "../pages/TermsAndConditions.jsx";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,11 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <SelfRegister />, // Ruta pública para el registro
+  },
+  
+  {
+    path: "/terms-and-conditions",
+    element: <TermsAndConditions />,
   },
 ]);
 

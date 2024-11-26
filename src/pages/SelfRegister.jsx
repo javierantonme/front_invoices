@@ -11,7 +11,7 @@ const SelfRegister = () => {
 
   const [formData, setFormData] = useState({
     firstName: "",
-    lastName: "", // Campo incluido
+    lastName: "",
     email: "",
     consecInit: 0,
     initialValue: 0.0,
@@ -28,15 +28,20 @@ const SelfRegister = () => {
     number: false,
     specialChar: false,
   });
+  const [termsAccepted, setTermsAccepted] = useState(false); // Nuevo estado para los términos
 
   useEffect(() => {
     const validateToken = async () => {
       try {
         if (!token) {
-          throw new Error("Token is missing. Please check your invitation link.");
+          throw new Error(
+            "Token is missing. Please check your invitation link."
+          );
         }
 
-        const response = await api.get(`/public/selft_registration?token=${token}`);
+        const response = await api.get(
+          `/public/selft_registration?token=${token}`
+        );
         setFormData((prev) => ({ ...prev, email: response.data.email }));
         setLoading(false);
       } catch (err) {
@@ -66,6 +71,14 @@ const SelfRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!termsAccepted) {
+      return Swal.fire(
+        "Error",
+        "You must accept the terms and conditions to register.",
+        "error"
+      );
+    }
 
     try {
       setLoading(true);
@@ -102,7 +115,9 @@ const SelfRegister = () => {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-100">
         <div className="bg-white border border-red-500 rounded-lg shadow-lg p-6 max-w-md text-center">
-          <h2 className="text-xl font-bold text-red-600 mb-4">Something Went Wrong</h2>
+          <h2 className="text-xl font-bold text-red-600 mb-4">
+            Something Went Wrong
+          </h2>
           <p className="text-gray-700 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
@@ -201,22 +216,57 @@ const SelfRegister = () => {
               <li className={passwordValidation.length ? "text-green-500" : ""}>
                 At least 8 characters
               </li>
-              <li className={passwordValidation.uppercase ? "text-green-500" : ""}>
+              <li
+                className={passwordValidation.uppercase ? "text-green-500" : ""}
+              >
                 At least one uppercase letter
               </li>
-              <li className={passwordValidation.lowercase ? "text-green-500" : ""}>
+              <li
+                className={passwordValidation.lowercase ? "text-green-500" : ""}
+              >
                 At least one lowercase letter
               </li>
               <li className={passwordValidation.number ? "text-green-500" : ""}>
                 At least one number
               </li>
-              <li className={passwordValidation.specialChar ? "text-green-500" : ""}>
+              <li
+                className={
+                  passwordValidation.specialChar ? "text-green-500" : ""
+                }
+              >
                 At least one special character
               </li>
             </ul>
+            <div className="mb-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="form-checkbox text-blue-500"
+                />
+                <label className="text-sm text-gray-600">
+                  I agree to the{" "}
+                  <a
+                    href="/terms-and-conditions"
+                    className="text-blue-500 underline hover:text-blue-600"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Terms and Conditions
+                  </a>{" "}
+                  of the platform.
+                </label>
+              </label>
+            </div>
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              disabled={!termsAccepted}
+              className={`w-full py-2 px-4 rounded text-white ${
+                termsAccepted
+                  ? "bg-blue-500 hover:bg-blue-600"
+                  : "bg-gray-300 cursor-not-allowed"
+              }`}
             >
               Register
             </button>
