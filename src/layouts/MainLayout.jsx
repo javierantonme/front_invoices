@@ -112,6 +112,12 @@ const MainLayout = ({ children }) => {
             >
               Logout
             </button>
+            <Link
+              to="/termsandconditions"
+              className="block text-center mt-2 text-sm text-blue-400 hover:underline"
+            >
+              Terms & Conditions
+            </Link>
           </div>
         </aside>
 

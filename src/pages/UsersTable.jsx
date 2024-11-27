@@ -10,6 +10,7 @@ const UsersTable = () => {
   const [selectedUser, setSelectedUser] = useState(null); // Usuario seleccionado para el modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [licences, setLicences] = useState([]); // Estado para las licencias
 
   // Cargar usuarios desde el backend
   useEffect(() => {
@@ -24,8 +25,25 @@ const UsersTable = () => {
       }
     };
 
-    fetchUsers();
+    const fetchLicences = async () => {
+      try {
+        const response = await api.get("/private/licences");
+        setLicences(response.data.licences);
+      } catch (error) {
+        console.error("Error fetching licences:", error);
+      }
+    };
+  
+    const fetchData = async () => {
+      setLoading(true);
+      await Promise.all([fetchUsers(), fetchLicences()]);
+      setLoading(false);
+    };
+
+    fetchData();
   }, []);
+
+  
 
   // Abrir el modal con la información del usuario seleccionado
   const handleUserClick = async (userId) => {
@@ -42,17 +60,13 @@ const UsersTable = () => {
   // Guardar cambios en el backend
   const handleSave = async (updatedUser) => {
     try {
-      
       await api.put(`/private/user/${Id}`, updatedUser);
       Swal.fire("Success", "User updated successfully", "success");
-
-      // Actualizar la lista de usuarios después de guardar
-      setUsers((prev) =>
-        prev.map((user) =>
-          user.id === updatedUser.id ? { ...user, ...updatedUser } : user
-        )
-      );
-
+  
+      // Recargar la lista de usuarios desde el backend
+      const response = await api.get("/private/users");
+      setUsers(response.data.users);
+  
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error updating user:", error);
@@ -92,6 +106,9 @@ const UsersTable = () => {
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 border-b">
                   Invoices
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600 border-b">
+                  Licence
                 </th>
               </tr>
             </thead>
@@ -134,6 +151,7 @@ const UsersTable = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3 border-b">{user.invoiceCount || "N/A"}</td>
+                  <td className="px-4 py-3 border-b">{user.numberInvoices || "N/A"}</td>
                 </tr>
               ))}
             </tbody>
@@ -144,6 +162,7 @@ const UsersTable = () => {
       {isModalOpen && selectedUser && (
         <UserModal
           user={selectedUser}
+          licences={licences} // Lista de licencias
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
         />

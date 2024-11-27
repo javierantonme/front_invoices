@@ -36,6 +36,7 @@ const router = createBrowserRouter([
       { path: "/profile", element: <ProfilePage /> },
       { path: "/invoices", element: <InvoicesPage /> },
       { path: "/invoices/new", element: <CreateInvoicePage /> },
+      { path: "/termsandconditions", element: <TermsAndConditions /> },
       {
         path: "/invite",
         element: (
