@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
-const UserModal = ({ user, onClose, onSave }) => {
+const UserModal = ({ user, licences, onClose, onSave }) => {
   const [formData, setFormData] = useState(user);
 
+  // Manejar cambios en los campos del formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -11,6 +13,10 @@ const UserModal = ({ user, onClose, onSave }) => {
   const handleSave = () => {
     onSave(formData);
   };
+
+  useEffect(() => {
+    setFormData(user); // Actualiza los datos al abrir el modal
+  }, [user]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
@@ -98,6 +104,24 @@ const UserModal = ({ user, onClose, onSave }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
+              Licence
+            </label>
+            <select
+              name="licenceId"
+              value={formData.licenceId || ""}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded"
+            >
+              <option value="">Select a Licence</option>
+              {licences.map((licence) => (
+                <option key={licence.id} value={licence.id}>
+                  {licence.name} ({licence.numberInvoices} Invoices)
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
               Status
             </label>
             <select
@@ -134,6 +158,28 @@ const UserModal = ({ user, onClose, onSave }) => {
       </div>
     </div>
   );
+};
+
+UserModal.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone: PropTypes.string,
+    address: PropTypes.string,
+    active: PropTypes.bool.isRequired,
+    role: PropTypes.string.isRequired,
+    licenceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }).isRequired,
+  licences: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
 };
 
 export default UserModal;

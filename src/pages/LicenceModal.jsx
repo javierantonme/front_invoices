@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 const LicenceModal = ({ licence, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -7,7 +8,7 @@ const LicenceModal = ({ licence, onClose, onSave }) => {
     name: licence?.name || "",
     numberInvoices: licence?.numberInvoices || 5,
     description: licence?.description || "",
-    active: licence?.active || true,
+    active: licence?.active || false,
   });
 
   const handleChange = (e) => {
@@ -112,6 +113,25 @@ const LicenceModal = ({ licence, onClose, onSave }) => {
       </div>
     </div>
   );
+};
+
+// Validación de PropTypes
+LicenceModal.propTypes = {
+  licence: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    code: PropTypes.string,
+    name: PropTypes.string,
+    numberInvoices: PropTypes.number,
+    description: PropTypes.string,
+    active: PropTypes.bool,
+  }),
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+};
+
+// Valores predeterminados (opcional)
+LicenceModal.defaultProps = {
+  licence: null,
 };
 
 export default LicenceModal;

@@ -142,7 +142,7 @@ const CreateInvoicePage = () => {
           navigate("/invoices");
         } catch (error) {
           console.error("Error creating invoice:", error);
-          Swal.fire("Error", "Failed to create invoice.", "error");
+          Swal.fire("Error", error.response.data.error, "error");
         } finally {
           setSaving(false); // Ocultar spinner
         }
