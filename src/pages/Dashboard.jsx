@@ -1,8 +1,9 @@
 // src/pages/Dashboard.jsx
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../axiosConfig";
 import { AuthContext } from "../context/AuthContext";
+import { CharIncome } from "../components/CharIncome";
 
 const Dashboard = () => {
   const [data, setData] = useState({
@@ -13,7 +14,7 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const {logout } = useContext(AuthContext); // Acceso a logout para cerrar sesión
+  const { user, logout } = useContext(AuthContext); // Acceso a logout para cerrar sesión
   const navigate = useNavigate();
 
   // Función para obtener los datos del backend
@@ -29,6 +30,8 @@ const Dashboard = () => {
         fiscalPeriodInvoices: response.data.totalAmount,
         taxProvision: response.data.totalSavesForTaxes,
         quantity: response.data.invoiceCount,
+        users: response.data.totalUsers,
+        summation: response.data.totalByMonth,
       });
       setLoading(false);
     } catch (err) {
@@ -84,7 +87,21 @@ const Dashboard = () => {
             <p className="text-3xl font-bold">${data.taxProvision}</p>
           </div>
         </div>
+
+        {/* Count of Users  */}
+
+        {user.userLoged.role == "admin" && (
+          <div className="bg-yellow-500 text-white rounded-lg shadow-md flex items-center justify-center h-40">
+            <div className="text-center">
+              <Link to="/users">
+                <p className="text-lg font-semibold">Users</p>
+                <p className="text-3xl font-bold">{data.users}</p>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
+      <CharIncome summation={data.summation} />
     </div>
   );
 };
