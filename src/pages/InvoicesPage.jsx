@@ -25,31 +25,31 @@ const InvoicesPage = () => {
     fetchInvoices();
   }, []);
 
-  const handleDelete = async (invoiceId) => {
-    const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "This invoice will be permanently deleted!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    });
+  // const handleDelete = async (invoiceId) => {
+  //   const confirm = await Swal.fire({
+  //     title: "Are you sure?",
+  //     text: "This invoice will be permanently deleted!",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Yes, delete it!",
+  //   });
 
-    if (confirm.isConfirmed) {
-      setProcessing(true); // Mostrar spinner
-      try {
-        await api.delete(`private/invoices/${invoiceId}`);
-        setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId));
-        Swal.fire("Deleted!", "Your invoice has been deleted.", "success");
-      } catch (error) {
-        console.error("Error deleting invoice:", error);
-        Swal.fire("Error", "Failed to delete invoice.", "error");
-      } finally {
-        setProcessing(false); // Ocultar spinner
-      }
-    }
-  };
+  //   if (confirm.isConfirmed) {
+  //     setProcessing(true); // Mostrar spinner
+  //     try {
+  //       await api.delete(`private/invoices/${invoiceId}`);
+  //       setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId));
+  //       Swal.fire("Deleted!", "Your invoice has been deleted.", "success");
+  //     } catch (error) {
+  //       console.error("Error deleting invoice:", error);
+  //       Swal.fire("Error", "Failed to delete invoice.", "error");
+  //     } finally {
+  //       setProcessing(false); // Ocultar spinner
+  //     }
+  //   }
+  // };
 
   const handlePrintPDF = async (invoiceId) => {
     setProcessing(true); // Mostrar spinner
@@ -160,13 +160,13 @@ const InvoicesPage = () => {
                     >
                       ✉️
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => handleDelete(invoice.id)}
                       className="mx-2 text-red-500"
                       title="Delete Invoice"
                     >
                       🗑️
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))}

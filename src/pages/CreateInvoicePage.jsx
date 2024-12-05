@@ -83,50 +83,17 @@ const CreateInvoicePage = () => {
       return;
     }
 
-    const details = invoiceDetails.map((detail) => {
-      const service = services.find(
-        (s) => String(s.id) === String(detail.serviceId)
-      );
-      const unitPrice = parseFloat(detail.unitPrice) || 0;
-      const quantity = parseFloat(detail.quantity) || 0;
-
-      return {
-        serviceName: service ? service.name : "N/A",
-        quantity,
-        unitPrice,
-        total: quantity * unitPrice,
-      };
-    });
-
     Swal.fire({
-      title: "Invoice Summary",
-      html: `
-        <p><strong>Customer:</strong> ${customer.name}</p>
-        <p><strong>Total Amount:</strong> $${totalAmount.toFixed(2)}</p>
-        <p><strong>Details:</strong></p>
-        <ul>
-          ${details
-            .map(
-              (detail) => `
-            <li>
-              ${detail.serviceName} - Quantity: ${
-                detail.quantity
-              }, Unit Price: $${detail.unitPrice.toFixed(
-                2
-              )}, Total: $${detail.total.toFixed(2)}
-            </li>
-          `
-            )
-            .join("")}
-        </ul>
-      `,
-      icon: "info",
+      title: "Confirm Invoice",
+      text: `The total invoice amount is $${totalAmount.toFixed(
+        2
+      )}. Do you want to save?`,
+      icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Save Invoice",
-      cancelButtonText: "Cancel",
+      confirmButtonText: "Yes, Save",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        setSaving(true); // Mostrar spinner
+        setSaving(true);
         try {
           const detailsPayload = invoiceDetails.map((detail) => ({
             serviceId: detail.serviceId,
@@ -144,7 +111,7 @@ const CreateInvoicePage = () => {
           console.error("Error creating invoice:", error);
           Swal.fire("Error", error.response.data.error, "error");
         } finally {
-          setSaving(false); // Ocultar spinner
+          setSaving(false);
         }
       }
     });
@@ -157,20 +124,15 @@ const CreateInvoicePage = () => {
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
-      <h1 className="text-2xl font-bold mb-6">Create Invoice</h1>
-      <form>
-        <div className="mb-4">
-          <label
-            htmlFor="customerId"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Customer
-          </label>
+      <h1 className="text-3xl font-bold mb-6">Create Invoice</h1>
+      <div className="space-y-6">
+        {/* Customer Selection */}
+        <div className="bg-white p-4 rounded shadow">
+          <h2 className="text-lg font-semibold mb-3">Step 1: Select Customer</h2>
           <select
-            id="customerId"
             value={selectedCustomer}
             onChange={(e) => setSelectedCustomer(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="w-full p-2 border border-gray-300 rounded"
           >
             <option value="" disabled>
               Select a customer
@@ -183,14 +145,15 @@ const CreateInvoicePage = () => {
           </select>
         </div>
 
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold">Invoice Details</h2>
+        {/* Invoice Details */}
+        <div className="bg-white p-4 rounded shadow">
+          <h2 className="text-lg font-semibold mb-3">Step 2: Add Services</h2>
           {invoiceDetails.map((detail, index) => (
             <div
               key={index}
-              className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-center"
+              className="flex items-center space-x-4 mb-4 border-b pb-2"
             >
-              <div>
+              <div className="flex-1">
                 <label
                   htmlFor={`serviceId-${index}`}
                   className="block text-sm font-medium text-gray-700"
@@ -203,7 +166,7 @@ const CreateInvoicePage = () => {
                   onChange={(e) =>
                     handleServiceChange(index, "serviceId", e.target.value)
                   }
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="w-full p-2 border border-gray-300 rounded"
                 >
                   <option value="" disabled>
                     Select a service
@@ -229,8 +192,8 @@ const CreateInvoicePage = () => {
                   onChange={(e) =>
                     handleServiceChange(index, "quantity", e.target.value)
                   }
-                  placeholder="Quantity"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Qty"
+                  className="w-20 p-2 border border-gray-300 rounded"
                 />
               </div>
               <div>
@@ -247,44 +210,40 @@ const CreateInvoicePage = () => {
                   onChange={(e) =>
                     handleServiceChange(index, "unitPrice", e.target.value)
                   }
-                  placeholder="Unit Price"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Price"
+                  className="w-28 p-2 border border-gray-300 rounded"
                 />
               </div>
               <button
-                type="button"
                 onClick={() => handleRemoveService(index)}
-                className="bg-gray-200 text-red-500 hover:text-red-700 px-2 py-2 rounded-full focus:outline-none"
+                className="text-red-500 hover:text-red-700"
               >
                 🗑
               </button>
             </div>
           ))}
-        </div>
-
-        <div className="flex justify-between">
           <button
-            type="button"
             onClick={handleAddService}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
             Add Service
           </button>
+        </div>
 
+        {/* Total and Save */}
+        <div className="bg-white p-4 rounded shadow text-center">
+          <h2 className="text-lg font-semibold mb-2">Invoice Total</h2>
+          <p className="text-2xl font-bold text-blue-600">
+            ${calculateTotal().toFixed(2)}
+          </p>
           <button
-            type="button"
             onClick={handleSaveInvoice}
-            className={`px-4 py-2 rounded ${
-              saving
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
-            } text-white`}
-            disabled={saving}
+            className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
           >
-            {saving ? "Saving..." : "Save Invoice"}
+            Save Invoice
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
