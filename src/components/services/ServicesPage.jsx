@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import api from "../axiosConfig";
-import ServiceModal from "../pages/ServiceModal";
+import api from "../../axiosConfig";
+import ServiceModal from "./ServiceModal";
+import ServicesTable from "./ServicesTable";
+import Spinner from "../Spinner";
 
 const ServicesPage = () => {
   const [services, setServices] = useState([]);
@@ -13,13 +15,7 @@ const ServicesPage = () => {
   const fetchServices = async () => {
     try {
       const response = await api.get("/private/service");
-
-      // Verifica si `services` está presente en la respuesta
-      if (response.data.services) {
-        setServices(response.data.services);
-      } else {
-        setServices([]); // Si no hay servicios, establece un arreglo vacío
-      }
+      setServices(response.data.services || []);
     } catch (err) {
       console.error(err);
       setError("Error fetching services.");
@@ -66,24 +62,22 @@ const ServicesPage = () => {
   };
 
   const handleSubmitService = async (serviceData) => {
-    
     try {
       if (editingService) {
-    await api.put(`/private/service/${editingService.id}`, serviceData);
+        await api.put(`/private/service/${editingService.id}`, serviceData);
         Swal.fire("Updated!", "The service has been updated.", "success");
       } else {
-      await api.post("/private/service", serviceData);
+        await api.post("/private/service", serviceData);
         Swal.fire("Added!", "The service has been added.", "success");
       }
       fetchServices();
     } catch (err) {
-    
       console.error("Error saving service:", err);
-      Swal.fire("Error!", err.response.data.error, "error");
+      Swal.fire("Error!", err.response?.data?.error || "Failed to save service.", "error");
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Spinner />;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
@@ -117,47 +111,11 @@ const ServicesPage = () => {
         service={editingService}
       />
 
-      <div className="overflow-x-auto">
-        {services.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">
-            No services found. Click Add New Service to create one.
-          </p>
-        ) : (
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr>
-                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Code</th>
-                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Name</th>
-                <th className="border border-gray-300 px-4 py-2 bg-gray-100">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {services.map((service) => (
-                <tr key={service.id} className="hover:bg-gray-100 transition-colors">
-                  <td className="border border-gray-300 px-4 py-2">{service.code}</td>
-                  <td className="border border-gray-300 px-4 py-2">{service.name}</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 w-full">
-                      <button
-                        className="bg-blue-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-blue-600"
-                        onClick={() => handleEditService(service)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="bg-red-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-red-600"
-                        onClick={() => handleDeleteService(service.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <ServicesTable
+        services={services}
+        onEdit={handleEditService}
+        onDelete={handleDeleteService}
+      />
     </div>
   );
 };

@@ -39,14 +39,7 @@ const MainLayout = ({ children }) => {
                     Dashboard
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/invoices"
-                    className="block p-2 hover:bg-gray-700 rounded"
-                  >
-                    My Invoices
-                  </Link>
-                </li>
+
                 <li>
                   <Link
                     to="/clients"
@@ -61,6 +54,35 @@ const MainLayout = ({ children }) => {
                     className="block p-2 hover:bg-gray-700 rounded"
                   >
                     Services
+                  </Link>
+                </li>
+                {user.userLoged.role === "admin" && (
+                  <li>
+                    <Link
+                      to="/licences"
+                      className="block p-2 hover:bg-gray-700 rounded"
+                    >
+                      Licences
+                    </Link>
+                  </li>
+                )}
+                {user.userLoged.role === "admin" && (
+                  <li>
+                    <Link
+                      to="/users"
+                      className="block p-2 hover:bg-gray-700 rounded"
+                    >
+                      Users
+                    </Link>
+                  </li>
+                )}
+
+                <li>
+                  <Link
+                    to="/invoices"
+                    className="block p-2 hover:bg-gray-700 rounded"
+                  >
+                    My Invoices
                   </Link>
                 </li>
                 <li>
@@ -78,26 +100,6 @@ const MainLayout = ({ children }) => {
                       className="block p-2 hover:bg-gray-700 rounded"
                     >
                       Invite Someone
-                    </Link>
-                  </li>
-                )}
-                {user.userLoged.role === "admin" && (
-                  <li>
-                    <Link
-                      to="/users"
-                      className="block p-2 hover:bg-gray-700 rounded"
-                    >
-                      Users
-                    </Link>
-                  </li>
-                )}
-                 {user.userLoged.role === "admin" && (
-                  <li>
-                    <Link
-                      to="/licences"
-                      className="block p-2 hover:bg-gray-700 rounded"
-                    >
-                      Licences
                     </Link>
                   </li>
                 )}

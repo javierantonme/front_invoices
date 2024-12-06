@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import api from "../axiosConfig";
+import api from "../../axiosConfig";
+import CustomerTable from "./CustomerTable";
 import CustomerModal from "./CustomerModal";
 import Swal from "sweetalert2";
+import Spinner from "../Spinner";
 
 const CustomersPage = () => {
   const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true); // Spinner de carga inicial
-  const [actionLoading, setActionLoading] = useState(false); // Spinner para acciones
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
@@ -49,7 +51,7 @@ const CustomersPage = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        setActionLoading(true); // Mostrar spinner para la acción
+        setActionLoading(true);
         try {
           await api.delete(`/private/customer/${id}`);
           Swal.fire("Deleted!", "The customer has been deleted.", "success");
@@ -58,14 +60,14 @@ const CustomersPage = () => {
           console.error("Error deleting customer:", err);
           Swal.fire("Error!", "Failed to delete the customer.", "error");
         } finally {
-          setActionLoading(false); // Ocultar spinner
+          setActionLoading(false);
         }
       }
     });
   };
 
   const handleSubmitCustomer = async (customerData) => {
-    setActionLoading(true); // Mostrar spinner para la acción
+    setActionLoading(true);
     try {
       if (editingCustomer) {
         await api.put(`/private/customer/${editingCustomer.id}`, customerData);
@@ -79,21 +81,15 @@ const CustomersPage = () => {
       console.error("Error saving customer:", err);
       Swal.fire("Error!", "Failed to save the customer.", "error");
     } finally {
-      setActionLoading(false); // Ocultar spinner
-      setIsModalOpen(false); // Cerrar el modal
+      setActionLoading(false);
+      setIsModalOpen(false);
     }
   };
 
   return (
     <div className="p-4">
-      {(loading || actionLoading) && (
-        <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
-
+      {(loading || actionLoading) && <Spinner />}
       {!loading && !actionLoading && error && <p className="text-red-500">{error}</p>}
-
       {!loading && !error && (
         <>
           <div className="flex justify-between items-center mb-6">
@@ -117,62 +113,17 @@ const CustomersPage = () => {
               Add New Customer
             </button>
           </div>
-
           <CustomerModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onSubmit={handleSubmitCustomer}
             customer={editingCustomer}
           />
-
-          <div className="overflow-x-auto">
-            {customers.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">
-                No customers found for this user. Click Add New Customer to create one.
-              </p>
-            ) : (
-              <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr>
-                    <th className="border border-gray-300 px-4 py-2 bg-gray-100">Code</th>
-                    <th className="border border-gray-300 px-4 py-2 bg-gray-100">Name</th>
-                    <th className="border border-gray-300 px-4 py-2 bg-gray-100">Phone</th>
-                    <th className="border border-gray-300 px-4 py-2 bg-gray-100">Suburb</th>
-                    <th className="border border-gray-300 px-4 py-2 bg-gray-100">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {customers.map((customer) => (
-                    <tr
-                      key={customer.id}
-                      className="hover:bg-gray-100 transition-colors"
-                    >
-                      <td className="border border-gray-300 px-4 py-2">{customer.code}</td>
-                      <td className="border border-gray-300 px-4 py-2">{customer.name}</td>
-                      <td className="border border-gray-300 px-4 py-2">{customer.phone}</td>
-                      <td className="border border-gray-300 px-4 py-2">{customer.suburb}</td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 w-full">
-                          <button
-                            className="bg-blue-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-blue-600"
-                            onClick={() => handleEditCustomer(customer)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="bg-red-500 text-white w-full md:w-auto px-4 py-2 rounded hover:bg-red-600"
-                            onClick={() => handleDeleteCustomer(customer.id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+          <CustomerTable
+            customers={customers}
+            onEdit={handleEditCustomer}
+            onDelete={handleDeleteCustomer}
+          />
         </>
       )}
     </div>

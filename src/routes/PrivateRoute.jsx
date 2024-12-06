@@ -3,12 +3,12 @@ import { useContext } from "react";
 import PropTypes from 'prop-types';
 import { Navigate } from "react-router-dom";
 import {AuthContext} from "../context/AuthContext";
-
+import Spinner from '../components/Spinner'
 const PrivateRoute = ({ children }) => {
   const { user, loading  } = useContext(AuthContext);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
 
 
