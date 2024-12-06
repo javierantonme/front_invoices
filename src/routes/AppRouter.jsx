@@ -1,22 +1,22 @@
 // src/routes/AppRouter.jsx
 
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import LoginPage from "../pages/LoginPage.jsx";
-import Dashboard from "../pages/Dashboard.jsx";
+import LoginPage from "../components/login/LoginPage.jsx";
+import Dashboard from "../components/dashboard/Dashboard.jsx";
 import MainLayout from "../layouts/MainLayout.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
-import CustomersPage from "../pages/CustomersPage.jsx";
-import ServicesPage from "../pages/ServicesPage.jsx";
-import ProfilePage from "../pages/ProfilePage.jsx";
-import InvoicesPage from "../pages/InvoicesPage.jsx";
-import CreateInvoicePage from "../pages/CreateInvoicePage.jsx";
-import SelfRegister from "../pages/SelfRegister.jsx";
+import CustomersPage from "../components/customers/CustomersPage.jsx";
+import ServicesPage from "../components/services/ServicesPage.jsx";
+import ProfilePage from "../components/profile/ProfilePage.jsx";
+import InvoicesPage from "../components/invoices/InvoicesPage";
+import CreateInvoicePage from "../components/creteInvoices/CreateInvoicePage.jsx";
+import SelfRegister from "../components/registration/SelfRegister";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
-import InviteUserPage from "../pages/InviteUserPage.jsx";
+import InviteUserPage from "../components/invitation/InviteUserPage.jsx";
 import RoleProtectedRoute from "./RoleProtectedRoute.jsx";
-import UsersTable from "../pages/UsersTable.jsx";
-import TermsAndConditions from "../pages/TermsAndConditions.jsx";
-import LicencesTable from "../pages/LicencesTable.jsx";
+import UsersTable from "../components/users/UsersTable.jsx";
+import TermsAndConditions from "../components/term_and_conditions/TermsAndConditions";
+import LicencesTable from "../components/licences/LicencesTable.jsx";
 
 const router = createBrowserRouter([
   {

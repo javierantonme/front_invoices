@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import api from "../axiosConfig";
+import api from "../../axiosConfig.js";
 import Swal from "sweetalert2";
 
 const ChangePasswordModal = ({ isOpen, onClose }) => {
