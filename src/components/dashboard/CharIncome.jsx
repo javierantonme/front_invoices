@@ -21,10 +21,13 @@ export const CharIncome = ({ summation }) => {
     "December",
   ];
 
+
+
   useEffect(() => {
     const monthYearLabels = summation.map(
-      (row) => `${monthNames[row.Month - 1]} ${row.Year || "2023"}`
+      (row) => `${monthNames[row.Month - 1]} ${row.Year}`
     );
+    
   
     const ctx = document.getElementById("acquisitions").getContext("2d");
     if (chartRef.current) {
