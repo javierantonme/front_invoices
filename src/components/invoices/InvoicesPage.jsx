@@ -15,7 +15,8 @@ const InvoicesPage = () => {
     const fetchInvoices = async () => {
       try {
         const response = await api.get("/private/invoice");
-        setInvoices(response.data.invoices || []);
+       
+        setInvoices(response.data.invoices.reverse() || []);
       } catch (error) {
         console.error("Error fetching invoices:", error);
       } finally {
@@ -26,12 +27,19 @@ const InvoicesPage = () => {
     fetchInvoices();
   }, []);
 
-  const handlePrintPDF = async (invoiceId) => {
+  const handlePrintPDF = async (invoiceId, customerName) => {
+
+ 
     setProcessing(true);
     try {
-      const response = await api.get(`/private/invoices/${invoiceId}/print`, {
-        responseType: "blob",
-      });
+
+      const endpoint = customerName === "ProClean Commercial Cleaning"
+          ? `/private/invoices/${invoiceId}/print` 
+          : `/private/invoices/${invoiceId}/printf2`;  
+
+          const response = await api.get(endpoint, {
+            responseType: 'blob',
+          });
 
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
