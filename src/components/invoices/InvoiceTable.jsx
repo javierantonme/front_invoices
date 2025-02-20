@@ -46,7 +46,7 @@ const InvoiceTable = ({ invoices, onPrint, onSendEmail }) => {
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-center">
                   <button
-                    onClick={() => onPrint(invoice.id)}
+                    onClick={() => onPrint(invoice.id, invoice.customer.name)}
                     className="mx-2"
                     title="Print PDF"
                   >
@@ -72,7 +72,7 @@ const InvoiceTable = ({ invoices, onPrint, onSendEmail }) => {
 InvoiceTable.propTypes = {
   invoices: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       consecutive: PropTypes.number.isRequired,
       dateInvoice: PropTypes.string.isRequired,
       customer: PropTypes.shape({

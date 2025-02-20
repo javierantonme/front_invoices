@@ -16,6 +16,7 @@ const CreateInvoicePage = () => {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [invoiceDetails, setInvoiceDetails] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [comments, setComments] = useState("Cleaning Services for week ending Sunday, / /2025 ");
 
   // Efecto para cargar clientes y servicios al montar el componente
   useEffect(() => {
@@ -111,6 +112,7 @@ const CreateInvoicePage = () => {
           await api.post("/private/invoice", {
             customerId: selectedCustomer,
             details: detailsPayload,
+            comments,
           });
           Swal.fire("Success", "Invoice created successfully!", "success");
           navigate("/invoices");
@@ -143,6 +145,8 @@ const CreateInvoicePage = () => {
         />
         <InvoiceSummary
           total={calculateTotal()}
+          comments={comments} // Pasamos el estado
+          setComments={setComments} // Pasamos la función para actualizarlo
           handleSaveInvoice={handleSaveInvoice}
         />
       </div>
